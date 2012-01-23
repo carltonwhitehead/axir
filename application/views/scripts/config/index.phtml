@@ -1,0 +1,80 @@
+<?php
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+
+if ($this->messages):
+    foreach ($this->messages as $message):
+        ?>
+<div>
+    <p class="message info">
+        <?= $this->escape($message) ?>
+    </p>
+</div>
+        <?php
+    endforeach;
+endif;
+
+if ($this->events): ?>
+<div>
+    <p>
+        <a href="<?= $this->baseUrl('/config/add-event') ?>">Add an event</a>
+    </p>
+    <?php
+    $groupYear = '';
+    foreach ($this->events as $event)
+    {
+        $date = $event->date;
+        $eventYear = $date->toString('Y');
+        
+        if ($groupYear != $eventYear)
+        {
+            if ($groupYear !== '')
+            {
+                ?>
+    </ul>
+                <?php
+            }
+            $groupYear = $eventYear;
+            ?>
+    <h2><?= $groupYear ?></h2>
+    <ul>
+            <?php
+        }
+        $eventUrl = $this->baseUrl('/config/event/event-id/'.$event->id);
+        $eventLabel = $this->escape($event->label);
+        $eventDate = $date->toString('M/d');
+        ?>
+        <li>
+            <a href="<?= $eventUrl ?>"><?= $eventLabel ?></a> -  
+            <?= $eventDate ?>
+        </li>
+        <?php
+        
+    }
+    ?>
+</div>
+<?php else: ?>
+<div>
+    <p>
+        There are no events in this system yet. Please
+        <a href="<?= $this->baseUrl('/config/add-event') ?>">add an event</a>.
+    </p>
+</div>
+<?php endif; ?>

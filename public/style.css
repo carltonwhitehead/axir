@@ -1,0 +1,84 @@
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+
+html{
+    background-image: none;
+}
+table.results
+{
+    
+}
+table.results thead tr
+{
+    /*background-color: #ff0;*/
+}
+table.results th, table.results td
+{
+    padding: 0.25em;
+}
+
+.keywords li, .keywords li:first-of-type
+{
+	text-transform:none;
+}
+
+form dl.zend_form label, form dl.zend_form label:after, form dl.zend_form dt:after
+{
+    content: none; 
+}
+
+form dl.zend_form dd
+{
+    margin-left: 0;
+}
+
+#unknown-state-files ul
+{
+    margin-left: 1.5em;
+}
+#unknown-state-files ul li
+{
+    list-style-position: outside;
+    cursor: pointer;
+}
+#unknown-state-files ul li:hover
+{
+    background-color: lightyellow;
+}
+
+.driversTable .nameColumn, .driversTable .numberColumn
+{
+    width: 25%;
+}
+
+.driversTable .carColumn
+{
+    width: 50%;
+}
+
+#driverResults tr.bestRun td
+{
+    font-weight: bold;
+}
+
+#footer #copyright
+{
+    font-size: small;
+}

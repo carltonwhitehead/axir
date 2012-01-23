@@ -1,0 +1,72 @@
+<?php
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+?>
+
+<h2><?= $this->h2 ?></h2>
+<table class="results" id="<?= $this->type ?>-results">
+    <thead>
+        <tr>
+            <th>Place / Numbers</th>
+            <th>Driver / Car</th>
+            <th><?= strtoupper($this->type) ?> Time</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
+    $timeField = 'bestTime'.$this->type;
+    $place = 1;
+    foreach ($this->drivers as $driver):
+        ?>
+        <tr>
+            <td>
+                <?= $place ?><br />
+                <?php
+                $driverHref = $this->baseUrl(
+                    '/events/driver/event-id/' . $this->event->id .
+                    '/driver-id/' . $driver->id
+                );
+                ?>
+                <a href="<?= $driverHref ?>">
+                    <?= $this->escape($driver->category->prefix.$driver->class->name.' '.$driver->number) ?>
+                </a>
+            </td>
+            <td>
+                    <?= $this->escape($driver->name) ?><br />
+                    <?= $this->escape($driver->car) ?>
+            </td>
+            <td>
+                <?= $this->escape($driver->$timeField) ?>
+            </td>
+        </tr>
+        <?php
+        $place++;
+    endforeach;
+    if (count($this->drivers) === 0):
+        ?>
+        <tr>
+            <td>No runs (yet?)</td>
+            <td colspan="2"></td>
+        </tr>
+        <?php
+    endif;
+    ?>
+    </tbody>
+</table>

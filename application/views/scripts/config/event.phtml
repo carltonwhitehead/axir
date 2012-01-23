@@ -1,0 +1,70 @@
+<?php
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+?>
+<div class="grids">
+    <div class="grid-16">
+        <h1>Configure an Event</h1>
+    </div>
+    <?php
+    foreach ($this->messages as $message):
+        ?>
+    <div class="grid-16 ">
+        <p class="message info"><?= $this->escape($message) ?></p>
+    </div>
+        <?php
+    endforeach;
+    ?>
+    <div>
+        <?= $this->form ?>
+    </div>
+    <div class="grid-10">
+        <dl>
+            <dt>
+                <?php
+                $resyncUrl = $this->baseUrl(
+                            '/config/resync-event/event-id/' . 
+                            $this->event->id
+                        );
+                ?>
+                <a href="<?= $resyncUrl ?>">Resync Event</a>
+            </dt>
+            <dd>
+                Forces Instant Results to update the event with the latest
+                information from the State File, regardless of the modification
+                date. Bypasses the event.resync.minimumAgeSeconds variable
+                in config.ini.
+            </dd>
+            <dt>
+                <?php
+                $deleteUrl = $this->baseUrl(
+                            '/config/delete-event/event-id/' .
+                            $this->event->id
+                        );
+                ?>
+                <a href="<?= $deleteUrl ?>">Delete Event</a>
+            </dt>
+            <dd>
+                Removes all data about this event from Instant Results.
+                Does not affect the State File or AXware in any way.
+            </dd>
+        </dl>
+    </div>
+</div>

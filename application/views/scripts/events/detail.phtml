@@ -1,0 +1,159 @@
+<?php
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+?>
+
+<div>
+    <?php
+    $eventLabelModel = array(
+        'event' => $this->event
+    );
+    echo $this->partial('events/event-label.phtml', $eventLabelModel);
+    ?>
+    <p>
+        <?= $this->driversTotal ?> drivers have taken 
+        <?= $this->runsTotal ?> runs
+        and hit <?= floor($this->conesTotal) ?> cones
+        for an average of <?= round($this->conesTotal / $this->runsTotal, 2) ?> cones per run.
+    </p>
+    <div id="toRawResults">
+        <?php
+        $linkRawResults = $this->baseUrl('/events/raw-results/event-id/'.$this->event->id);
+        ?>
+        <p><a href="<?= $linkRawResults ?>">Raw Results</a></p>
+    </div>
+    <div id="toPaxResults">
+        <?php
+        $linkPaxResults = $this->baseUrl('/events/pax-results/event-id/'.$this->event->id);
+        ?>
+        <p><a href="<?= $linkPaxResults ?>">PAX Results</a></p>
+    </div>
+    <div id="toClassResults">
+        <?php
+        $classLinks = array();
+        foreach ($this->categories as $category)
+        {
+            if ($category->name === 'open') continue;
+            $linkCategoryResults = '<a href="' . 
+                    $this->baseUrl('/events/category-results' . 
+                            '/event-id/' . $this->event->id . 
+                            '/category-id/' . $category->id
+                    ) .
+                    '">' . $this->escape($category->label) .
+                    '</a>';
+            $classLinks[] = $linkCategoryResults;
+        }
+        foreach ($this->classes as $class)
+        {
+            $linkClassResults  = '<a href="' .
+                    $this->baseUrl('/events/class-results' . 
+                            '/event-id/' . $this->event->id .
+                            '/class-id/' . $class->id
+                            
+                    ) .
+                    '">' . $this->escape($class->name) .
+                    '</a>';
+            $classLinks[] = $linkClassResults;
+        }
+        ?>
+            Category/Class Results: 
+        <?php
+        echo $this->htmlList(
+            $classLinks,
+            true,
+            array('class'=>'keywords'),
+            false
+        );
+        ?>
+    </div>
+    <div id="toDriver">
+        <div>
+            <?php
+            $firstLinks = array();
+            foreach($this->driverFirsts as $letter)
+            {
+                $firstLinks[] = '<a href="#drivers-'.$letter.'">'.$letter.'</a>';
+            }
+            $firstLinks = $this->htmlList(
+                    $firstLinks,
+                    true,
+                    array('class'=>'keywords'),
+                    false);
+            ?>
+            Jump to Driver Name starts with: <?= $firstLinks ?>
+        </div>
+        <?php
+        $last_first = '';
+        foreach($this->drivers as $driver)
+        {
+            $first = strtoupper(substr($driver->name, 0, 1));
+            if ($first !== $last_first)
+            {
+                if ($last_first !== '')
+                {
+                    ?>
+                </tr>
+            </tbody>
+        </table>
+                    <?php
+                }
+                
+                    ?>
+        <table id="drivers-<?= $first ?>" class="driversTable">
+            <caption>Drivers - <?= $first ?> - <a href="#top">[top]</a></caption>
+            <thead>
+                <tr>
+                    <th class="nameColumn">Name</th>
+                    <th class="numberColumn">Class/No.</th>
+                    <th class="carColumn">Car</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <?php
+            }
+            ?>
+                <tr>
+                    <?php
+                    $driverUrl = $this->baseUrl(
+                            '/events/driver'.
+                            '/event-id/'.$this->event->id.
+                            '/driver-id/'.$driver->id
+                    );
+                    $name =     $this->escape($driver->name);
+                    $number =   '<a href="'.$driverUrl.'">' .
+                                $this->escape($driver->category->prefix) .
+                                $this->escape($driver->class->name) .
+                                ' ' .$this->escape($driver->number) .
+                                '</a>';
+                    $car =      $this->escape($driver->carColor) . ' ' .
+                                $this->escape($driver->car);
+                                
+                    ?>
+                    
+                    <td class="nameColumn"><?= $name ?></td>
+                    <td class="numberColumn"><?= $number ?></td>
+                    <td class="carColumn"><?= $car ?></td>
+                </tr>
+                <?php
+                $last_first = $first;
+            }
+            ?>
+    </div>
+</div>

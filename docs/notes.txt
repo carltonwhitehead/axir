@@ -1,0 +1,31 @@
+/workspace/cebesius/instantresults.trunk/data/statefiles/2011/03202011event.st1
+THSCC Points #1
+2011-03-20
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2011/04172011event.st1
+THSCC Points #2
+2011-04-17
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2011/05222011event.st1
+THSCC Points #3
+2011-05-22
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2011/06262011event.st1
+THSCC Points #4
+2011-06-26
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2011/07162011event.st1
+THSCC Points #5
+2011-07-16
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2010/03282010_AX1.st1
+THSCC Points #1
+2010-03-28
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2010/04112010.st1
+THSCC Points #2
+2010-04-11
+
+/workspace/cebesius/instantresults.trunk/data/statefiles/2010/05152010.st1
+THSCC Points #3
+2010-05-15

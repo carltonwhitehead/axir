@@ -1,0 +1,91 @@
+<?php
+/*
+Copyright 2012 Carlton Whitehead
+
+This file is part of Autocross Instant Results.
+
+Autocross Instant Results is free software: you can redistribute it and/or
+modify it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Autocross Instant Results is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with Autocross Instant Results.  If not, see 
+<http://www.gnu.org/licenses/>.
+ */
+
+$eventLabelModel = array(
+    'event' => $this->event
+);
+echo $this->partial('events/event-label.phtml', $eventLabelModel);
+
+?>
+<h2><?= $this->driver->name ?></h2>
+<p>
+        <?php
+        if ($this->driver->category->name !== 'open')
+        {
+            $category = '<a href="' . $this->baseUrl(
+                    '/events/category-results/event-id/' . $this->event->id .
+                    '/category-id/' . $this->driver->category->id
+                ) . '">' . $this->escape($this->driver->category->label) .
+                '</a>';
+            $class = $this->escape($this->driver->class->name);
+        }
+        else
+        {
+            $category = $this->escape($this->driver->category->label);
+            $class = '<a href="' . $this->baseUrl(
+                    '/events/class-results/event-id/' . $this->event->id .
+                    '/class-id/' . $this->driver->class->id
+                ) . '">' . $this->escape($this->driver->class->name) .
+                '</a>';
+        }
+        ?>
+        <?= $category ?> category,
+        <?= $class ?> <?= $this->driver->number ?>
+</p>
+<p>
+    <?= $this->driver->carColor ?>
+    <?= $this->driver->car ?>
+</p>
+
+<table id="driverResults">
+    <thead>
+        <tr>
+            <th>Run</th>
+            <th>Raw Time</th>
+            <th>PAX Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        foreach ($this->runs as $run):
+        if ($run->timeRawWithPenalty === $this->driver->bestTimeRaw)
+            $rowClass = 'bestRun';
+        else
+            $rowClass = '';
+            ?>
+        <tr class="<?= $rowClass ?>">
+            <td>
+                <?= $this->escape($run->number) ?>
+            </td>
+            <?php
+            echo $this->partial('events/run-time-cell.phtml', array(
+                'run' => $run
+            ));
+            ?>
+            <td>
+                <?= $this->escape($run->timePaxWithPenalty) ?>
+            </td>
+        </tr>
+            <?php
+        endforeach;
+        ?>
+    </tbody>
+</table>
