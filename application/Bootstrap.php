@@ -149,6 +149,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         }
         $acl->addResource('configuration');
         $acl->allow('user-local','configuration');
+        $configOption = $this->getOption('config');
+        if ($configOption['allowFromAny'] === true)
+        {
+            $acl->allow('user-remote','configuration');
+        }
         $nav = $this->getResource('Navigation');
         Zend_View_Helper_Navigation::setDefaultAcl($acl);
         Zend_View_Helper_Navigation::setDefaultRole('user');
