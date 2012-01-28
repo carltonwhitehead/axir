@@ -149,8 +149,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         }
         $acl->addResource('configuration');
         $acl->allow('user-local','configuration');
-        $configOption = $this->getOption('config');
-        if ($configOption['allowFromAny'] === true)
+        $configControllerOptions = $this->getOption('configController');
+        if ($configControllerOptions['allowFromAny'] === 'true')
         {
             $acl->allow('user-remote','configuration');
         }

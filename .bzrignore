@@ -1,1 +1,3 @@
 nbproject
+data/cache/*
+data/db/AxIr.sqlite.db
