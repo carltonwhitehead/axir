@@ -124,4 +124,9 @@ class AxIr_Model_Event extends AxIr_Model_Abstract
         }
         return $needsResync;
     }
+    
+    public function getAverageConesHitPerRun()
+    {
+        
+    }
 }

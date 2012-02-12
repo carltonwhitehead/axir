@@ -163,4 +163,9 @@ class AxIr_Model_Run extends AxIr_Model_Abstract
     {
         $this->_data['timestamp'] = $timestamp;
     }
+    
+    public function getTimeOfDay()
+    {
+        return $this->_data['timestamp']->toString('h:mm:ss a');
+    }
 }

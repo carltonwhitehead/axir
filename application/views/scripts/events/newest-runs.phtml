@@ -41,7 +41,7 @@ echo $this->partial('events/event-label.phtml', $eventLabelModel);
         ?>
         <tr>
             <td>
-                <?= $run->timestamp->toString('h:mm:ss a') ?><br />
+                <?= $run->getTimeOfDay() ?><br />
                 <?php
                 $driverHref = $this->baseUrl(
                     '/events/driver/event-id/' . $this->event->id .

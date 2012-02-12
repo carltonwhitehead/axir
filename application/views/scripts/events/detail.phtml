@@ -26,6 +26,7 @@ along with Autocross Instant Results.  If not, see
         'event' => $this->event
     );
     echo $this->partial('events/event-label.phtml', $eventLabelModel);
+    if ($this->runsTotal > 0):
     ?>
     <p>
         <?= $this->driversTotal ?> drivers have taken 
@@ -33,17 +34,19 @@ along with Autocross Instant Results.  If not, see
         and hit <?= floor($this->conesTotal) ?> cones
         for an average of <?= round($this->conesTotal / $this->runsTotal, 2) ?> cones per run.
     </p>
-    <div id="toRawResults">
+    <div class="">
+        <?php
+        $linkNewestRuns = $this->baseUrl('/events/newest-runs/event-id/'.$this->event->id);
+        ?> 
+        <span id="toNewestRuns"><a href="<?= $linkNewestRuns ?>">Newest Runs</a></span>, 
         <?php
         $linkRawResults = $this->baseUrl('/events/raw-results/event-id/'.$this->event->id);
         ?>
-        <p><a href="<?= $linkRawResults ?>">Raw Results</a></p>
-    </div>
-    <div id="toPaxResults">
+        <span id="toRawResults"><a href="<?= $linkRawResults ?>">Raw Results</a></span>, 
         <?php
         $linkPaxResults = $this->baseUrl('/events/pax-results/event-id/'.$this->event->id);
         ?>
-        <p><a href="<?= $linkPaxResults ?>">PAX Results</a></p>
+        <span id="toPaxResults"><a href="<?= $linkPaxResults ?>">PAX Results</a></span>
     </div>
     <div id="toClassResults">
         <?php
@@ -155,5 +158,14 @@ along with Autocross Instant Results.  If not, see
                 $last_first = $first;
             }
             ?>
+            </tbody>
+        </table>
     </div>
+    <?php
+    else:
+    ?>
+    <p>No runs on file yet.</p>
+    <?php
+    endif;
+    ?>
 </div>

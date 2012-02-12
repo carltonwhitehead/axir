@@ -116,15 +116,14 @@ class AxIr_Model_CategoryService extends AxIr_Model_ServiceAbstract
      */
     protected function _getCategoryRowsWithRunsAtEvent($eventId)
     {
-        $table = $this->_getDbTable();
-        $select = $table->select();
-        $select->join('drivers', 'categories.id = drivers.category_id', array());
-        $select->join('runs', 'drivers.id = runs.driver_id', array());
-        $select->where('drivers.event_id = ?', $eventId);
-        $select->from('categories');
-        $select->order('label ASC');
-        $select->distinct(true);
-        $rows = $table->fetchAll($select);
+        $adapter = $this->_getDbTable()->getAdapter();
+        $sql = 'select distinct categories.* ' .
+                'from categories ' .
+                'inner join drivers on categories.id = drivers.category_id ' .
+                'inner join runs on drivers.id = runs.driver_id '.
+                'where drivers.event_id = ? ' .
+                'order by categories.label asc';
+        $rows = $adapter->fetchAll($sql, array($eventId));
         return $rows;
     }
     
@@ -139,9 +138,9 @@ class AxIr_Model_CategoryService extends AxIr_Model_ServiceAbstract
         $categories = array();
         foreach ($rows as $row)
         {
-            if (($model = $this->_getCachedModel($row->id)) === false)
+            if (($model = $this->_getCachedModel($row['id'])) === false)
             {
-                $model = $this->createFromRow($row);
+                $model = $this->createFromArray($row);
                 $this->_cacheModel($model);
             }
             $categories[] = $model;

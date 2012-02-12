@@ -115,15 +115,14 @@ class AxIr_Model_ClassService extends AxIr_Model_ServiceAbstract
      */
     protected function _getClassRowsWithRunsAtEvent($eventId)
     {
-        $table = $this->_getDbTable();
-        $select = $table->select();
-        $select->joinInner('drivers', 'classes.id = drivers.class_id', array());
-        $select->joinInner('runs', 'drivers.id = runs.driver_id', array());
-        $select->where('drivers.event_id = ?', $eventId);
-        $select->from('classes');
-        $select->order('name ASC');
-        $select->distinct(true);
-        $rows = $table->fetchAll($select);
+        $adapter = $this->_getDbTable()->getAdapter();
+        $sql = 'select distinct classes.* ' .
+                'from classes ' .
+                'inner join drivers on classes.id = drivers.class_id ' .
+                'inner join runs on drivers.id = runs.driver_id '.
+                'where drivers.event_id = ? ' . 
+                'order by classes.name asc';
+        $rows = $adapter->fetchAll($sql, array($eventId));
         return $rows;
     }
     
@@ -138,9 +137,9 @@ class AxIr_Model_ClassService extends AxIr_Model_ServiceAbstract
         $classes = array();
         foreach ($rows as $row)
         {
-            if (($model = $this->_getCachedModel($row->id)) === false)
+            if (($model = $this->_getCachedModel($row['id'])) === false)
             {
-                $model = $this->createFromRow($row);
+                $model = $this->createFromArray($row);
                 $this->_cacheModel($model);
             }
             $classes[] = $model;

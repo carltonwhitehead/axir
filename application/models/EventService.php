@@ -224,7 +224,14 @@ class AxIr_Model_EventService extends AxIr_Model_ServiceAbstract
                 ->getParam('bootstrap')
                 ->getOption('stateFilePath');
         $scanPath = realpath($stateFilePath);
-        $files = $this->_scanStateFileSubPath($scanPath);
+        if ($scanPath !== false)
+        {
+           $files = $this->_scanStateFileSubPath($scanPath); 
+        }
+        else
+        {
+            $files = array();
+        }
         
         // remove files not ending in .st1
         $stateFiles = array();

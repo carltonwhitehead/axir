@@ -73,7 +73,8 @@ echo $this->partial('events/event-label.phtml', $eventLabelModel);
             ?>
         <tr class="<?= $rowClass ?>">
             <td>
-                <?= $this->escape($run->number) ?>
+                <?= $this->escape($run->number) ?> / 
+                <?= $this->escape($run->getTimeOfDay()) ?>
             </td>
             <?php
             echo $this->partial('events/run-time-cell.phtml', array(
