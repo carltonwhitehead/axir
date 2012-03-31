@@ -20,17 +20,54 @@ along with Autocross Instant Results.  If not, see
  */
 class AxIr_Controller_Plugin_Agreement extends Zend_Controller_Plugin_Abstract
 {
+    protected $_config;
     /**
      * in the preDispatch loop, determine whether to require agreement
      * @param Zend_Controller_Request_Abstract $request 
      */
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
-        $config = Zend_Controller_Front::getInstance()
+        $this->_config = Zend_Controller_Front::getInstance()
                 ->getParam('bootstrap')
                 ->getOption('agreement');
-        if ($config['require']) $this->requireAgreement($request);
-        
+        if ($this->_agreementIsRequired()
+                and !$this->_hostMayBypassAgreement())
+        {
+            $this->_requireAgreement($request);
+        }
+    }
+    
+    protected function _agreementIsRequired()
+    {
+        $required = true;
+        if (array_key_exists('require', $this->_config)
+                and $this->_config['require'] === 'false')
+        {
+            $required = false;
+        }
+        return $required;
+    }
+    
+    protected function _hostMayBypassAgreement()
+    {
+        $acl = new Zend_Acl();
+        $acl->addRole($_SERVER['REMOTE_ADDR']);
+        $acl->addResource('agreement');
+        if (array_key_exists('hostsAllowedToBypass', $this->_config)
+                and $this->_config['hostsAllowedToBypass'])
+        {
+            $hostsAllowedToBypass = $this->_config['hostsAllowedToBypass'];
+            foreach ($hostsAllowedToBypass as $hostAllowedToBypass)
+            {
+                if (!$acl->hasRole($hostAllowedToBypass))
+                {
+                    $acl->addRole($hostAllowedToBypass);
+                }
+            }
+            $acl->allow($hostsAllowedToBypass, 'agreement', 'bypass');
+        }
+        $acl->addRole('host', array($_SERVER['REMOTE_ADDR']));
+        return $acl->isAllowed('host', 'agreement', 'bypass');
     }
     
     /**
@@ -38,7 +75,7 @@ class AxIr_Controller_Plugin_Agreement extends Zend_Controller_Plugin_Abstract
      * alter the current request to force the user into agreement
      * @param Zend_Controller_Request_Abstract $request 
      */
-    protected function requireAgreement(Zend_Controller_Request_Abstract $request)
+    protected function _requireAgreement(Zend_Controller_Request_Abstract $request)
     {
         $session = new Zend_Session_Namespace('AxIr_Form_Agreement');
         if (!isset($session->agreed) or !$session->agreed)

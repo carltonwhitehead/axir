@@ -137,24 +137,27 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     protected function _initAcl()
     {
         $acl = new Zend_Acl();
-        $acl->addRole('user-local');
-        $acl->addRole('user-remote');
-        if (substr($_SERVER['REMOTE_ADDR'],0,4) === '127.')
-        {
-            $acl->addRole('user', array('user-local'));
-        }
-        else
-        {
-            $acl->addRole('user', array('user-remote'));
-        }
         $acl->addResource('configuration');
-        $acl->allow('user-local','configuration');
+        $acl->addRole($_SERVER['REMOTE_ADDR']);
+        $acl->addRole('user', array($_SERVER['REMOTE_ADDR']));
         $configControllerOptions = $this->getOption('configController');
-        if ($configControllerOptions['allowFromAny'] === 'true')
+        if (array_key_exists('hostsAllowed', $configControllerOptions))
         {
-            $acl->allow('user-remote','configuration');
+            $hostsAllowed = $configControllerOptions['hostsAllowed'];
+            foreach ($hostsAllowed as $hostAllowed)
+            {
+                if (!$acl->hasRole($hostAllowed))
+                {
+                    $acl->addRole($hostAllowed);
+                }
+            }
+            $acl->allow($hostsAllowed, 'configuration');
         }
-        $nav = $this->getResource('Navigation');
+        if (array_key_exists('allowFromAny', $configControllerOptions)
+                and $configControllerOptions['allowFromAny'] === 'true')
+        {
+            $acl->allow('user','configuration');
+        }
         Zend_View_Helper_Navigation::setDefaultAcl($acl);
         Zend_View_Helper_Navigation::setDefaultRole('user');
         return $acl;
