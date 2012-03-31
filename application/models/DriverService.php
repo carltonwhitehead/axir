@@ -337,7 +337,10 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $table = $this->_getDbTable();
         $select = $table->select();
         $select->where('event_id = ?', $eventId);
-        $select->order("best_time_{$timeType} ASC");
+        $bestTimeColumn = "best_time_{$timeType}";
+        /*$select->where("$bestTimeColumn IS NOT NULL");
+        $select->where("$bestTimeColumn != ?", "");*/
+        $select->order("{$bestTimeColumn} ASC");
         $rows = $table->fetchAll($select);
         return $rows;
     }

@@ -99,6 +99,7 @@ class AxIr_Parser_StateFileLine
             }
         }
         else $value = '';
+        $value = trim($value);
         return $value;
     }
     
