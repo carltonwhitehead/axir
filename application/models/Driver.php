@@ -50,16 +50,28 @@ class AxIr_Model_Driver extends AxIr_Model_Abstract
         return $this->_data['id'];
     }
     
+    /**
+     *
+     * @return AxIr_Model_Event
+     */
     public function getEvent()
     {
         return $this->_data['event'];
     }
     
+    /**
+     *
+     * @return AxIr_Model_Category 
+     */
     public function getCategory()
     {
         return $this->_data['category'];
     }
     
+    /**
+     * 
+     * @return AxIr_Model_Class 
+     */
     public function getClass()
     {
         return $this->_data['class'];
@@ -95,6 +107,18 @@ class AxIr_Model_Driver extends AxIr_Model_Abstract
     {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['bestTimePax']);
+    }
+    
+    public function getUrl()
+    {
+        return '/events/driver/event-id/' .
+                $this->getEvent()->getId() .
+                '/driver-category-id/' .
+                $this->getCategory()->getId() .
+                '/driver-class-id/' .
+                $this->getClass()->getId() .
+                '/driver-number/' .
+                $this->getNumber();
     }
 }
 

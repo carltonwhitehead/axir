@@ -169,10 +169,29 @@ class EventsController extends Zend_Controller_Action
 
     public function driverAction()
     {
-        if (($driverId = $this->_getParam('driver-id')) !== null)
+        if (($driverClassId = $this->_getParam('driver-class-id')) !== null
+            and ($driverCategoryId = $this->_getParam('driver-category-id')) !== null
+            and ($driverNumber = $this->_getParam('driver-number')) !== null
+        )
         {
+            $categoryService = new AxIr_Model_CategoryService();
+            if (($category = $categoryService->getByPrimary($driverCategoryId)) === false)
+            {
+                throw new Zend_Controller_Action_Exception('Invalid driver category id');
+            }
+            $classService = new AxIr_Model_ClassService();
+            if (($class = $classService->getByPrimary($driverClassId)) === false)
+            {
+                throw new Zend_Controller_Action_Exception('Invalid driver class id');
+            }
+            
             $driverService = new AxIr_Model_DriverService();
-            if (($driver = $driverService->getByPrimary($driverId)) !== false)
+            if (($driver = $driverService->getDriverByEventCategoryClassNumber(
+                    $this->_event, 
+                    $category, 
+                    $class, 
+                    $driverNumber)) !== false
+            )
             {
                 $runService = new AxIr_Model_RunService();
                 $runs = $runService->getRunsAtEventByDriver($this->_event, $driver);

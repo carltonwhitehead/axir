@@ -166,7 +166,12 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
      * @param mixed $number
      * @return AxIr_Model_Driver|false 
      */
-    public function getDriverByEventCategoryClassNumber(AxIr_Model_Event $event, AxIr_Model_Category $category, AxIr_Model_Class $class, $number)
+    public function getDriverByEventCategoryClassNumber(
+            AxIr_Model_Event $event, 
+            AxIr_Model_Category $category, 
+            AxIr_Model_Class $class, 
+            $number
+    )
     {
         if (
                 ($model = $this->_getCachedDriverByEventCategoryClassNumber(
@@ -472,5 +477,40 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $table = $this->_getDbTable();
         return $table->getAdapter()->fetchCol($sql, array($event->id));
     }
+    
+//    protected function _getDriverRowByEventCategoryClassNumber(
+//            $eventId,
+//            $categoryId,
+//            $classId,
+//            $number
+//    )
+//    {
+//        $table = $this->_getDbTable();
+//        $select = $table->select();
+//        $select->where('event_id = ?', $eventId)
+//                ->where('category_id = ?', $categoryId)
+//                ->where('class_id = ?', $classId)
+//                ->where('number = ?', $number);
+//        return $table->fetchRow($select);
+//    }
+//    
+//    public function getDriverByEventCategoryClassNumber(
+//            AxIr_Model_Event $event,
+//            AxIr_Model_Category $category,
+//            AxIr_Model_Class $class,
+//            $number
+//    )
+//    {
+//        $row = $this->_getDriverRowByEventCategoryClassNumber(
+//                $event->id,
+//                $category->id, 
+//                $class->id, 
+//                $number);
+//        if (($driver = $this->_getCachedModel($row->id)) === false)
+//        {
+//            $driver = $this->createFromRow($row);
+//            $this->_cacheModel($driver);
+//        }
+//        return $driver;
+//    }
 }
-

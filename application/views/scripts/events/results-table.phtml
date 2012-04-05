@@ -39,10 +39,7 @@ along with Autocross Instant Results.  If not, see
             <td>
                 <?= $place ?><br />
                 <?php
-                $driverHref = $this->baseUrl(
-                    '/events/driver/event-id/' . $this->event->id .
-                    '/driver-id/' . $driver->id
-                );
+                $driverHref = $this->baseUrl($driver->getUrl());
                 ?>
                 <a href="<?= $driverHref ?>">
                     <?= $this->escape($driver->category->prefix.$driver->class->name.' '.$driver->number) ?>
