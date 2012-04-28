@@ -1,3 +1,7 @@
 nbproject
 data/cache/*
 data/db/AxIr.sqlite.db
+data/statefiles
+.buildpath
+.project
+.settings

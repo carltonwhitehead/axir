@@ -19,18 +19,32 @@ along with Autocross Instant Results.  If not, see
 <http://www.gnu.org/licenses/>.
  */
 
+?>
+<td>
+<?php
 $run = $this->run;
-if (!$run->penalty):
-    ?>
-<td>
-    <?= $this->escape($run->timeRaw) ?>
-</td>
-    <?php
+$timeType = $this->timeType;
+$withoutPenaltyField = 'time' . $timeType . 'Formatted';
+$withPenaltyField = 'time' . $timeType . 'WithPenaltyFormatted';
+if ($run->hasPenalty()):
+    if ($run->isDnf()):
+        if ($this->dnfTimeVisible):
+            echo $this->escape($run->$withoutPenaltyField) . ' (DNF)';
+        else:
+            echo 'DNF';
+        endif;
+    else:
+        if ($this->coneTimeVisible):
+            echo $this->escape($run->$withoutPenaltyField) . ' + ' .
+                $this->escape($run->penalty) .
+                ' (' . $this->escape($run->$withPenaltyField) . ')';
+        else:
+            echo $this->escape($run->$withoutPenaltyField);
+        endif;
+        
+    endif;
 else:
-    ?>
-<td>
-    <?= $this->escape($run->timeRaw) ?> +<?= $this->escape($run->penalty) ?>
-    (<?= $this->escape($run->timeRawWithPenalty) ?>)
-</td>
-    <?php
+    echo $this->escape($run->$withoutPenaltyField);
 endif;
+?>
+</td>

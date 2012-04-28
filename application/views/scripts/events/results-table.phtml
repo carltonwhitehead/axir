@@ -32,6 +32,7 @@ along with Autocross Instant Results.  If not, see
     <tbody>
     <?php
     $timeField = 'bestTime'.$this->type;
+    $timeFieldFormatted = 'bestTime'.$this->type.'Formatted';
     $place = 1;
     foreach ($this->drivers as $driver):
         ?>
@@ -50,7 +51,13 @@ along with Autocross Instant Results.  If not, see
                     <?= $this->escape($driver->car) ?>
             </td>
             <td>
-                <?= $this->escape($driver->$timeField) ?>
+                <?php
+                if ($driver->$timeField == AxIr_Model_Run::PENALTY_TIME_DNF):
+                    echo 'DNF';
+                else:
+                    echo $this->escape($driver->$timeFieldFormatted);
+                endif;
+                ?>
             </td>
         </tr>
         <?php

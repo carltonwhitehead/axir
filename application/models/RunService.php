@@ -197,7 +197,8 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
             'driver' => $driver,
             'number' => $line->runNumber,
             'timeRaw' => $runTimeRaw,
-            'timePax' => $runTimePax,
+            'timePax' => ($penalty !== 'DNF') 
+                ? $runTimePax : $penalty,
             'penalty' => $runPenalty,
             'timeRawWithPenalty' => $this->_getTimeWithPenalty
             (
@@ -205,12 +206,8 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
                 $runTimeRaw,
                 $runPenalty
             ),
-            'timePaxWithPenalty' => $this->_getTimeWithPenalty
-            (
-                $event,
-                $runTimePax,
-                $runPenalty
-            ),
+            'timePaxWithPenalty' => ($penalty !== 'DNF')
+                ? $runTimePax : AxIr_Model_Run::PENALTY_TIME_DNF,
             'diff' => $line->diff,
             'diffFromFirst' => $line->diffFromFirst,
             'timestamp' => $runTimestamp
@@ -234,7 +231,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
                 $timeWithPenalty = $time;
                 break;
             case 'DNF':
-                $timeWithPenalty = 'DNF';
+                $timeWithPenalty = AxIr_Model_Run::PENALTY_TIME_DNF;
                 break;
             case 'RRN':
                 throw new AxIr_Exception_ReRun('Reruns dont count');

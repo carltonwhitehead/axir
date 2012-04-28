@@ -115,7 +115,7 @@ class AxIr_Parser_StateFileLine
         {
             self::$_categoryPrefixes = $categoryService->getCategoryPrefixes();
         }
-        $classString = $this->_parse('class');
+        $classString = strtoupper($this->_parse('class'));
         foreach (self::$_categoryPrefixes as $categoryPrefix)
         {
             if (
@@ -136,7 +136,7 @@ class AxIr_Parser_StateFileLine
     
     protected function _getDriverClass()
     {
-        $classString = $this->_parse('class');
+        $classString = strtoupper($this->_parse('class'));
         if ($classString === '')
         {
             $message = 'Invalid state file line is missing class.';
@@ -174,7 +174,7 @@ class AxIr_Parser_StateFileLine
     
     protected function _getPenalty()
     {
-        return $this->_parse('penalty');
+        return strtoupper($this->_parse('penalty'));
     }
     
     protected function _getDriverName()
@@ -200,7 +200,7 @@ class AxIr_Parser_StateFileLine
     
     protected function _getTimePax()
     {
-        $timePax = $this->_parse('paxed');
+        $timePax = strtoupper($this->_parse('paxed'));
         if ($timePax === '')
         {
             $message = 'Invalid state file line is missing pax time.';

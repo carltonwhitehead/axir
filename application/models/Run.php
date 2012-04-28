@@ -35,6 +35,8 @@ along with Autocross Instant Results.  If not, see
  */
 class AxIr_Model_Run extends AxIr_Model_Abstract
 {
+    const PENALTY_TIME_DNF = 9999;
+    
     protected $_data = array(
         'id'=>null,
         'event'=>null,
@@ -102,6 +104,10 @@ class AxIr_Model_Run extends AxIr_Model_Abstract
      */
     public function getTimeRaw()
     {
+        return $this->_data['timeRaw'];
+    }
+    
+    public function getTimeRawFormatted() {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['timeRaw']);
     }
@@ -110,8 +116,11 @@ class AxIr_Model_Run extends AxIr_Model_Abstract
      *
      * @return string
      */
-    public function getTimePax()
-    {
+    public function getTimePax() {
+        return $this->_data['timePax'];
+    }
+    
+    public function getTimePaxFormatted() {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['timePax']);
     }
@@ -128,15 +137,25 @@ class AxIr_Model_Run extends AxIr_Model_Abstract
     public function getTimeRawWithPenalty()
     {
         $runService = new AxIr_Model_RunService();
+        return $this->_data['timeRawWithPenalty'];
+    }
+    
+    public function getTimeRawWithPenaltyFormatted() {
+        $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['timeRawWithPenalty']);
     }
+    
+    
     
     /**
      *
      * @return string
      */
-    public function getTimePaxWithPenalty()
-    {
+    public function getTimePaxWithPenalty() {
+        return $this->_data['timePaxWithPenalty'];
+    }
+    
+    public function getTimePaxWithPenaltyFormatted() {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['timePaxWithPenalty']);
     }
@@ -167,5 +186,17 @@ class AxIr_Model_Run extends AxIr_Model_Abstract
     public function getTimeOfDay()
     {
         return $this->_data['timestamp']->toString('h:mm:ss a');
+    }
+    
+    public function hasPenalty() {
+        $penalty = $this->_data['penalty'];
+        return (
+                $penalty != null 
+                and $penalty != ''
+        );
+    }
+    
+    public function isDnf() {
+        return ($this->_data['timeRawWithPenalty'] == self::PENALTY_TIME_DNF);
     }
 }

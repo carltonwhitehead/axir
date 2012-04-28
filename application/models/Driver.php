@@ -99,12 +99,20 @@ class AxIr_Model_Driver extends AxIr_Model_Abstract
     
     public function getBestTimeRaw()
     {
+        return $this->_data['bestTimeRaw'];
+    }
+    
+    public function getBestTimeRawFormatted() {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['bestTimeRaw']);
     }
     
     public function getBestTimePax()
     {
+        return $this->_data['bestTimePax'];
+    }
+    
+    public function getBestTimePaxFormatted() {
         $runService = new AxIr_Model_RunService();
         return $runService->formatTime($this->_data['bestTimePax']);
     }

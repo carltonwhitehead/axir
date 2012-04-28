@@ -55,12 +55,18 @@ echo $this->partial('events/event-label.phtml', $eventLabelModel);
             </td>
             <?php
             echo $this->partial('events/run-time-cell.phtml', array(
-                'run'=>$run
+                'run'=>$run,
+                'timeType' => 'Raw',
+                'dnfTimeVisible' => true,
+                'coneTimeVisible' => true
+            ));
+            echo $this->partial('events/run-time-cell.phtml', array(
+                'run'=>$run,
+                'timeType' => 'Pax',
+                'dnfTimeVisible' => false,
+                'coneTimeVisible' => false
             ));
             ?>
-            <td>
-                <?= $run->timePaxWithPenalty ?>
-            </td>
         </tr>
         <?php
     endforeach;
