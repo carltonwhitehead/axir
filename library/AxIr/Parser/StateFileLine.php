@@ -19,22 +19,6 @@
   along with Autocross Instant Results.  If not, see
   <http://www.gnu.org/licenses/>.
  */
-
-/**
- * @property-read string $runNumber
- * @property-read string $driverCategory
- * @property-read string $driverClass
- * @property-read string $driverNumber
- * @property-read string $timeRaw
- * @property-read string $penalty
- * @property-read string $driverName
- * @property-read string $car
- * @property-read string $carColor
- * @property-read string $timePax
- * @property-read string $timestamp
- * @property-read string $diff
- * @property-read string $diffFromFirst
- */
 class AxIr_Parser_StateFileLine {
 
     /**
