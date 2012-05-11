@@ -59,9 +59,9 @@ class AxIr_Parser_StateFileLine {
                 $value = substr($this->_line, $valueStartPos);
             }
         }
-        else
+        else {
             $value = '';
-        $value = trim($value);
+        }
         return $value;
     }
 

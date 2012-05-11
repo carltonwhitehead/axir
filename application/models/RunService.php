@@ -197,8 +197,8 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
             'driver' => $driver,
             'number' => $line->getRunNumber(),
             'timeRaw' => $runTimeRaw,
-            'timePax' => ($penalty !== 'DNF')
-                ? $runTimePax : $penalty,
+            'timePax' => ($runPenalty !== 'DNF')
+                ? $runTimePax : $runPenalty,
             'penalty' => $runPenalty,
             'timeRawWithPenalty' => $this->_getTimeWithPenalty
             (
@@ -206,7 +206,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
                 $runTimeRaw,
                 $runPenalty
             ),
-            'timePaxWithPenalty' => ($penalty !== 'DNF')
+            'timePaxWithPenalty' => ($runPenalty !== 'DNF')
                 ? $runTimePax : AxIr_Model_Run::PENALTY_TIME_DNF,
             'diff' => $line->getDiff(),
             'diffFromFirst' => $line->getDiffFromFirst(),
