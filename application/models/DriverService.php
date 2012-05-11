@@ -15,7 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with Autocross Instant Results.  If not, see 
+along with Autocross Instant Results.  If not, see
 <http://www.gnu.org/licenses/>.
  */
 class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
@@ -25,25 +25,25 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
      * @var array
      */
     protected static $_rowRepository = array();
-    
+
     /**
      * static cache of model objects. less expensive than rows
      * @var array
      */
     protected static $_modelRepository = array();
-    
+
     /**
      * static cache of model objects. less expensive than rows
      * @var array
      */
     protected static $_modelRepositoryByEventClassCategoryNumber = array();
-    
+
     /**
      * indicate whether all rows are in the repository already
      * @var bool
      */
     protected static $_fetchedAll = false;
-    
+
     /**
      * instance of our table
      * @return Zend_Db_Table
@@ -63,43 +63,43 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         'bestTimeRaw'=>'best_time_raw',
         'bestTimePax'=>'best_time_pax'
     );
-    
+
     protected function _mapEvent($value)
     {
         $eventService = new AxIr_Model_EventService();
         return $eventService->getByPrimary($value);
     }
-    
+
     protected function _unmapEvent(AxIr_Model_Event $value)
     {
         return $value->getId();
     }
-    
+
     protected function _mapCategory($value)
     {
         $categoryService = new AxIr_Model_CategoryService();
         return $categoryService->getByPrimary($value);
     }
-    
+
     protected function _unmapCategory(AxIr_Model_Category $value)
     {
         return $value->getId();
     }
-    
+
     protected function _mapClass($value)
     {
         $classService = new AxIr_Model_ClassService();
         return $classService->getByPrimary($value);
     }
-    
+
     protected function _unmapClass(AxIr_Model_Class $value)
     {
         return $value->getId();
     }
-    
+
     /**
      * delete all drivers for a given event
-     * @param AxIr_Model_Event $event 
+     * @param AxIr_Model_Event $event
      */
     public function deleteAllForEvent(AxIr_Model_Event $event)
     {
@@ -110,7 +110,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $table->delete($deleteWhere); // schema cascades delete to runs table
         $class::$_rowRepository = array();
     }
-    
+
     /**
      * retrieve a driver row by their event, category, class, and number. if
      * not found, return false.
@@ -121,9 +121,9 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
      * @return Zend_Db_Table_Row|false
      */
     protected function _getDriverRowByEventIdCategoryIdClassIdNumber(
-            $eventId, 
-            $categoryId, 
-            $classId, 
+            $eventId,
+            $categoryId,
+            $classId,
             $number
     )
     {
@@ -156,7 +156,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return false;
     }
-    
+
     /**
      * return a driver model by event, category, class, and number. if not found,
      * return false.
@@ -164,20 +164,20 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
      * @param AxIr_Model_Category $category
      * @param AxIr_Model_Class $class
      * @param mixed $number
-     * @return AxIr_Model_Driver|false 
+     * @return AxIr_Model_Driver|false
      */
     public function getDriverByEventCategoryClassNumber(
-            AxIr_Model_Event $event, 
-            AxIr_Model_Category $category, 
-            AxIr_Model_Class $class, 
+            AxIr_Model_Event $event,
+            AxIr_Model_Category $category,
+            AxIr_Model_Class $class,
             $number
     )
     {
         if (
                 ($model = $this->_getCachedDriverByEventCategoryClassNumber(
-                        $event, 
-                        $category, 
-                        $class, 
+                        $event,
+                        $category,
+                        $class,
                         $number
                 )) !== false
         )
@@ -185,9 +185,9 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
             return $model;
         }
         $row = $this->_getDriverRowByEventIdCategoryIdClassIdNumber(
-                $event->id, 
-                $category->id, 
-                $class->id, 
+                $event->id,
+                $category->id,
+                $class->id,
                 $number
         );
         if (!$row) return false;
@@ -195,78 +195,78 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $this->_cacheModel($model);
         return $model;
     }
-    
+
     /**
      * construct a driver model for a given event and state file line
      * @param AxIr_Model_Event $event
      * @param AxIr_Parser_StateFileLine $line
-     * @return AxIr_Model_Driver 
+     * @return AxIr_Model_Driver
      */
     public function createFromStateFileLine(
-            AxIr_Model_Event $event, 
+            AxIr_Model_Event $event,
             AxIr_Parser_StateFileLine $line
     )
     {
         $driver = new AxIr_Model_Driver();
         $driver->event = $event;
-        $driver->name = $line->driverName;
-        $driver->number = $line->driverNumber;
-        $driver->car = $line->car;
-        $driver->carColor = $line->carColor;
+        $driver->name = $line->getDriverName();
+        $driver->number = $line->getDriverNumber();
+        $driver->car = $line->getCar();
+        $driver->carColor = $line->getCarColor();
         $categoryService = new AxIr_Model_CategoryService();
-        $driverCategory = $line->driverCategory;
+        $driverCategory = $line->getDriverCategory();
         $driver->category = $categoryService->getCategoryByPrefix($driverCategory);
         $classService = new AxIr_Model_ClassService();
-        $driver->class = $classService->getClassByName($line->driverClass);
+        $driver->class = $classService->getClassByName($line->getDriverClass());
         if (!($driver->class instanceof AxIr_Model_Class))
         {
             $driver->class = new AxIr_Model_Class();
-            $driver->class->name = $line->driverClass;
+            $driver->class->name = $line->getDriverClass();
             $classService->store($driver->class);
         }
         return $driver;
     }
-    
+
     /**
      * override the parent::_cacheModel method with special logic
      * that is particular to serving Driver models. Driver models are cached
-     * both by primary key (as all services do with their respective models), 
+     * both by primary key (as all services do with their respective models),
      * and also by a composite of their event, category, class, and number.
-     * @param AxIr_Model_Class $model 
+     * @param AxIr_Model_Class $model
      */
-    protected function _cacheModel(AxIr_Model_Driver $model) 
+    protected function _cacheModel(AxIr_Model_Driver $model)
     {
         $class = $this->_getClass();
         $class::$_modelRepository[$model->id] = $model;
         $key = $this->_getCacheKeyDriverByEventCategoryClassNumber(
-                $model->event, 
-                $model->category, 
-                $model->class, 
+                $model->event,
+                $model->category,
+                $model->class,
                 $model->number
         );
         self::$_modelRepositoryByEventClassCategoryNumber[$key] = $model;
     }
-    
+
     /**
      * build a composite key for the driver event/category/class/number cache
      * @param AxIr_Model_Event $event
      * @param AxIr_Model_Category $category
      * @param AxIr_Model_Class $class
      * @param mixed $number
-     * @return string 
+     * @return string
      */
     protected function _getCacheKeyDriverByEventCategoryClassNumber(
-            AxIr_Model_Event $event, 
-            AxIr_Model_Category $category, 
-            AxIr_Model_Class $class, 
+            AxIr_Model_Event $event,
+            AxIr_Model_Category $category,
+            AxIr_Model_Class $class,
             $number
     )
     {
         return "{$event->id}-{$category->id}-{$class->id}-{$number}";
     }
-    
+
     /**
-     * retrieve a driver from cache by event, category, class, and number. if 
+     * retrieve a driver from cache by event, category, class, and number. if
      * not found, return false.
      * @param AxIr_Model_Event $event
      * @param AxIr_Model_Category $category
@@ -275,15 +275,15 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
      * @return AxIr_Model_Driver|false
      */
     protected function _getCachedDriverByEventCategoryClassNumber(
-            AxIr_Model_Event $event, 
-            AxIr_Model_Category $category, 
-            AxIr_Model_Class $class, 
+            AxIr_Model_Event $event,
+            AxIr_Model_Category $category,
+            AxIr_Model_Class $class,
             $number
     )
     {
         $key = $this->_getCacheKeyDriverByEventCategoryClassNumber(
-                $event, 
-                $category, 
+                $event,
+                $category,
                 $class,
                 $number
         );
@@ -293,7 +293,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return false;
     }
-    
+
     /**
      * retrieve a rowset of drivers at a given event
      * @param mixed $eventId
@@ -309,11 +309,11 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $rows = $table->fetchAll($select);
         return $rows;
     }
-    
+
     /**
      * retrieve an array of driver models at a given event
      * @param AxIr_Model_Event $event
-     * @return array 
+     * @return array
      */
     public function getDriversAtEvent(AxIr_Model_Event $event)
     {
@@ -330,9 +330,9 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return $drivers;
     }
-    
+
     /**
-     * 
+     *
      * @param mixed $eventId
      * @param string $timeType (must be either 'raw' or 'pax')
      * @return Zend_Db_Table_Rowset
@@ -349,13 +349,13 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $rows = $table->fetchAll($select);
         return $rows;
     }
-    
+
     /**
      * retrieve an array of driver models at a given event sorted by their best
      * time of a given type
      * @param AxIr_Model_Event $event
      * @param string $timeType (must be either 'raw' or 'pax')
-     * @return array 
+     * @return array
      */
     public function getDriversAtEventByBestTime(AxIr_Model_Event $event, $timeType)
     {
@@ -377,7 +377,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return $drivers;
     }
-    
+
     /**
      * retrieve driver rows at a given event in a given category ordered by
      * their best time of a certain time type
@@ -396,7 +396,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $rows = $table->fetchAll($select);
         return $rows;
     }
-    
+
     /**
      * retrieve an array of driver models at a given event in a given category
      * sorted by their best time
@@ -419,7 +419,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return $drivers;
     }
-    
+
     /**
      * retrieve a rowset of drivers at a given event in a given class by
      * their best raw time (open class-level comparisons are ALWAYS raw time)
@@ -438,7 +438,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $rows = $table->fetchAll($select);
         return $rows;
     }
-    
+
     /**
      * retrieve an array of driver models at a given event in a given class by
      * their best raw time (open class-level comparisons are ALWAYS raw time)
@@ -461,7 +461,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         }
         return $drivers;
     }
-    
+
     /**
      * retrieve an array of distinct first letter of driver first names
      * for a given event
@@ -477,7 +477,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
         $table = $this->_getDbTable();
         return $table->getAdapter()->fetchCol($sql, array($event->id));
     }
-    
+
 //    protected function _getDriverRowByEventCategoryClassNumber(
 //            $eventId,
 //            $categoryId,
@@ -493,7 +493,7 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
 //                ->where('number = ?', $number);
 //        return $table->fetchRow($select);
 //    }
-//    
+//
 //    public function getDriverByEventCategoryClassNumber(
 //            AxIr_Model_Event $event,
 //            AxIr_Model_Category $category,
@@ -503,8 +503,8 @@ class AxIr_Model_DriverService extends AxIr_Model_ServiceAbstract
 //    {
 //        $row = $this->_getDriverRowByEventCategoryClassNumber(
 //                $event->id,
-//                $category->id, 
-//                $class->id, 
+//                $category->id,
+//                $class->id,
 //                $number);
 //        if (($driver = $this->_getCachedModel($row->id)) === false)
 //        {

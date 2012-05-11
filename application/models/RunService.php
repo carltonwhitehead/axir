@@ -15,7 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with Autocross Instant Results.  If not, see 
+along with Autocross Instant Results.  If not, see
 <http://www.gnu.org/licenses/>.
  */
 class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
@@ -25,19 +25,19 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
      * @var array
      */
     protected static $_rowRepository = array();
-    
+
     /**
      * static cache of model objects. less expensive than rows
      * @var array
      */
     protected static $_modelRepository = array();
-    
+
     /**
      * indicate whether all rows are in the repository already
      * @var bool
      */
     protected static $_fetchedAll = false;
-    
+
     /**
      * instance of our table
      * @return Zend_Db_Table
@@ -59,9 +59,9 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         'diff'=>'diff_from_first',
         'timestamp'=>'timestamp'
     );
-    
+
     public static $elapsedTime = 0.0;
-    
+
     protected function _mapEvent($value)
     {
         if ($value instanceof AxIr_Model_Event)
@@ -80,12 +80,12 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $event;
     }
-    
+
     protected function _unMapEvent(AxIr_Model_Event $value)
     {
         return $value->id;
     }
-    
+
     protected function _mapDriver($value)
     {
         if ($value instanceof AxIr_Model_Driver)
@@ -104,22 +104,22 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $driver;
     }
-    
+
     protected function _unMapDriver(AxIr_Model_Driver $value)
     {
         return $value->getId();
     }
-    
+
     protected function _mapTimeRaw($value)
     {
         return (float) $value;
     }
-    
+
     protected function _mapTimePax($value)
     {
         return (float) $value;
     }
-    
+
     protected function _mapTimestamp($value)
     {
         if ($value instanceof Zend_Date)
@@ -134,14 +134,14 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
             }
             catch (Exception $e)
             {
-                $message = 'Unable to map Timestamp to Run: (' . 
+                $message = 'Unable to map Timestamp to Run: (' .
                         $e->getMessage() . ')';
                 throw new AxIr_Model_Service_Exception($message);
             }
         }
         return $timestamp;
     }
-    
+
     protected function _unmapTimestamp(Zend_Date $value)
     {
         if ($value instanceof Zend_Date)
@@ -155,31 +155,31 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $timestamp;
     }
-    
+
     /**
      * construct a run model for an event by parsing values for the run from the
      * given state file line
      * @param AxIr_Model_Event $event
      * @param AxIr_Parser_StateFileLine $line
-     * @return AxIr_Model_Run 
+     * @return AxIr_Model_Run
      */
     public function createFromStateFileLine(AxIr_Model_Event $event, AxIr_Parser_StateFileLine $line)
     {
         $driverService = new AxIr_Model_DriverService();
         $classService = new AxIr_Model_ClassService();
         $categoryService = new AxIr_Model_CategoryService();
-        $driverCategory = $categoryService->getCategoryByPrefix($line->driverCategory);
-        $driverClass = $classService->getClassByName($line->driverClass);
-        $driverNumber = $line->driverNumber;
+        $driverCategory = $categoryService->getCategoryByPrefix($line->getDriverCategory());
+        $driverClass = $classService->getClassByName($line->getDriverClass());
+        $driverNumber = $line->getDriverNumber();
         if (
                 $driverCategory instanceof AxIr_Model_Category
                 and $driverClass instanceof AxIr_Model_Class
         )
         {
             $driver = $driverService->getDriverByEventCategoryClassNumber(
-                    $event, 
-                    $driverCategory, 
-                    $driverClass, 
+                    $event,
+                    $driverCategory,
+                    $driverClass,
                     $driverNumber
             );
         }
@@ -188,16 +188,16 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
             $driver = $driverService->createFromStateFileLine($event, $line);
             $driverService->store($driver);
         }
-        $runTimeRaw = $line->timeRaw;
-        $runTimePax = $line->timePax;
-        $runPenalty = $line->penalty;
-        $runTimestamp = $line->timestamp;
+        $runTimeRaw = $line->getTimeRaw();
+        $runTimePax = $line->getTimePax();
+        $runPenalty = $line->getPenalty();
+        $runTimestamp = $line->getTimestamp();
         $run = $this->createFromArray(array(
             'event' => $event,
             'driver' => $driver,
-            'number' => $line->runNumber,
+            'number' => $line->getRunNumber(),
             'timeRaw' => $runTimeRaw,
-            'timePax' => ($penalty !== 'DNF') 
+            'timePax' => ($penalty !== 'DNF')
                 ? $runTimePax : $penalty,
             'penalty' => $runPenalty,
             'timeRawWithPenalty' => $this->_getTimeWithPenalty
@@ -208,20 +208,20 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
             ),
             'timePaxWithPenalty' => ($penalty !== 'DNF')
                 ? $runTimePax : AxIr_Model_Run::PENALTY_TIME_DNF,
-            'diff' => $line->diff,
-            'diffFromFirst' => $line->diffFromFirst,
+            'diff' => $line->getDiff(),
+            'diffFromFirst' => $line->getDiffFromFirst(),
             'timestamp' => $runTimestamp
         ));
         return $run;
     }
-    
+
     /**
      * process a raw or pax time with any applicable penalty and return the
      * adjusted time
      * @param AxIr_Model_Event $event
      * @param type $time
      * @param type $penalty
-     * @return float 
+     * @return float
      */
     protected function _getTimeWithPenalty(AxIr_Model_Event $event, $time, $penalty)
     {
@@ -240,7 +240,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $timeWithPenalty;
     }
-    
+
     /**
      * retrieve runs rows for a given event, optionally sorted by a given order
      * (sqlite will sort by primary key by default)
@@ -261,11 +261,11 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $table->fetchAll($select);
     }
-    
+
     /**
      * retrieve an array of all run models on file for the given event
      * @param AxIr_Model_Event $event
-     * @return array 
+     * @return array
      */
     public function getAllRunsFromEvent(AxIr_Model_Event $event)
     {
@@ -287,7 +287,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $runs;
     }
-    
+
     /**
      * retrieve the x newest rows of runs at a given event
      * @param mixed $eventId
@@ -303,12 +303,12 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         $select->limit($x);
         return $table->fetchAll($select);
     }
-    
+
     /**
      * retrieve an array of the newest x run models at a given event
      * @param AxIr_Model_Event $event
      * @param int $x
-     * @return array 
+     * @return array
      */
     public function getNewestXRunsAtEvent(AxIr_Model_Event $event, $x)
     {
@@ -330,7 +330,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $runs;
     }
-    
+
     /**
      * retrieve all runs rows for a given event by a given driver
      * @param mixed $eventId
@@ -347,7 +347,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         $rows = $table->fetchAll($select);
         return $rows;
     }
-    
+
     /**
      * retrieve all run models for a given event by a given driver
      * @param AxIr_Model_Event $event
@@ -369,7 +369,7 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         }
         return $runs;
     }
-    
+
     /**
      * find the total runs on file for a given event
      * @param AxIr_Model_Event $event
@@ -381,11 +381,11 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
         $sql = 'SELECT COUNT(id) FROM runs WHERE event_id = ?';
         return $table->getAdapter()->fetchOne($sql, array($event->id));
     }
-    
+
     /**
      * find the sum of cone penalties on file for a given event
      * @param AxIr_Model_Event $event
-     * @return mixed 
+     * @return mixed
      */
     public function getTotalConesFromEvent(AxIr_Model_Event $event)
     {
@@ -394,11 +394,11 @@ class AxIr_Model_RunService extends AxIr_Model_ServiceAbstract
                 'AND penalty != "DNF"';
         return $table->getAdapter()->fetchOne($sql, array($event->id));
     }
-    
+
     /**
      * utility to convert a run time to a standard format
      * @param int|string $time
-     * @return string 
+     * @return string
      */
     public function formatTime($time)
     {
