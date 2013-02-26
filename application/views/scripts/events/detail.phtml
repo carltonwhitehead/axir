@@ -65,6 +65,9 @@ along with Autocross Instant Results.  If not, see
         }
         foreach ($this->classes as $class)
         {
+            if ($class->hasRecurringCategoryPrefix($this->event))
+                continue;
+            
             $linkClassResults  = '<a href="' .
                     $this->baseUrl('/events/class-results' . 
                             '/event-id/' . $this->event->id .
