@@ -38,5 +38,24 @@ class AxIr_Model_Class extends AxIr_Model_Abstract
     {
         return $this->_data['name'];
     }
+    
+    public function hasRecurringCategoryPrefix(AxIr_Model_Event $event)
+    {
+        /* this is a hack to prevent RT*RT classes from appearing
+         * in the class/category list
+         */
+        $hasRecurringCategoryPrefix = false;
+        $name = $this->getName();
+        $cs = new AxIr_Model_CategoryService();
+        $categories = $cs->getCategoriesWithRunsAtEvent($event);
+        foreach ($categories as $category) {
+            $prefix = $category->getPrefix();
+            if ($prefix !== '' and strpos($name, $prefix) !== false) {
+                $hasRecurringCategoryPrefix = true;
+                echo "<!-- Name: $name hasPrefix: $prefix -->\n";
+                break;
+            }
+        }
+        return $hasRecurringCategoryPrefix;
+    }
 }
-

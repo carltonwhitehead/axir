@@ -99,7 +99,7 @@ class AxIr_Parser_StateFileLine {
         }
         $categoryPrefix = $this->getDriverCategory();
         if ($categoryPrefix != '') {
-            $classString = str_replace($categoryPrefix, '', $classString);
+            $classString = substr($classString, strlen($categoryPrefix));
         }
         return $classString;
     }
