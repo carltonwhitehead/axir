@@ -1,0 +1,14 @@
+{
+    "name": "carltonwhitehead/axir",
+    "description": "A web app that displays competitive standings and run information from legacy versions of AXware.",
+    "require": {
+        "zendframework/zendframework1": "1.12.20"
+    },
+    "license": "GNU Affero General Public License v3.0",
+    "authors": [
+        {
+            "name": "Carlton Whitehead",
+            "email": "cebesius86@gmail.com"
+        }
+    ]
+}
