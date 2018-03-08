@@ -33,6 +33,8 @@ set_include_path(implode(PATH_SEPARATOR, array(
     get_include_path(),
 )));
 
+require '../vendor/autoload.php';
+
 /** Zend_Application */
 require_once 'Zend/Application.php';
 
